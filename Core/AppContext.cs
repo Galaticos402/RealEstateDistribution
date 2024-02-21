@@ -32,8 +32,10 @@ namespace Core
         {
             modelBuilder.Entity<Booking>()
                          .HasKey(b => new { b.SaleBatchDetailId, b.CustomerId });
+            modelBuilder.Entity<User>()
+                        .HasDiscriminator(u => u.Role);
             modelBuilder.Entity<Project>()
-                          .HasOne<Investor>()
+                          .HasOne<Investor>(p => p.Investor)
                           .WithMany(i => i.Projects)
                           .HasForeignKey(p => p.InvestorId)
                           .OnDelete(DeleteBehavior.ClientCascade);
@@ -41,12 +43,14 @@ namespace Core
                           .HasOne<Agency>()
                           .WithMany(a => a.Divisions)
                           .HasForeignKey(d => d.AgencyId)
+                          .IsRequired(false)
                           .OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<Booking>()
                          .HasOne<Customer>()
                          .WithMany(c => c.Bookings)
                          .HasForeignKey(b => b.CustomerId)
                          .OnDelete(DeleteBehavior.ClientCascade);
+           
         }
     }
 }

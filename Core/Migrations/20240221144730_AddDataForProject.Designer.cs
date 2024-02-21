@@ -4,6 +4,7 @@ using Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20240221144730_AddDataForProject")]
+    partial class AddDataForProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,18 +50,10 @@ namespace Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DivisionId"), 1L, 1);
 
-                    b.Property<int?>("AgencyId")
+                    b.Property<int>("AgencyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DivisionName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DivisionStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -276,7 +270,8 @@ namespace Core.Migrations
                     b.HasOne("Core.Agency", null)
                         .WithMany("Divisions")
                         .HasForeignKey("AgencyId")
-                        .OnDelete(DeleteBehavior.ClientCascade);
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
 
                     b.HasOne("Core.Project", null)
                         .WithMany("Divisions")
@@ -287,13 +282,11 @@ namespace Core.Migrations
 
             modelBuilder.Entity("Core.Project", b =>
                 {
-                    b.HasOne("Core.Investor", "Investor")
+                    b.HasOne("Core.Investor", null)
                         .WithMany("Projects")
                         .HasForeignKey("InvestorId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
-
-                    b.Navigation("Investor");
                 });
 
             modelBuilder.Entity("Core.Property", b =>

@@ -1,3 +1,5 @@
+using API.Extensions;
+using AutoMapper;
 using Core;
 using Infrastructure.Repository;
 using Infrastructure.Service;
@@ -10,11 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
+builder.Services.AddScoped<IGenericRepository<Project>, GenericRepository<Project>>();
+builder.Services.AddScoped<IGenericRepository<Division>, GenericRepository<Division>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var mapperConfig = new MapperConfiguration(mc => mc.AddProfile(new MappingProfile()));
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
 builder.Services.AddSwaggerGen(setup =>

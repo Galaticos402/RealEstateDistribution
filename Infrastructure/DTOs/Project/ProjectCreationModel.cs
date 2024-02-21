@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core
+namespace Infrastructure.DTOs.Project
 {
-    public class Project
+    public class ProjectCreationModel
     {
-        [Key]
-        public int ProjectId { get; set; }
         public string ProjectName { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
@@ -22,7 +19,5 @@ namespace Core
         public string ProjectStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public int InvestorId { get; set; }
-        public virtual List<Division> Divisions { get; set; }
-        public virtual Investor Investor { get; set; }
     }
 }

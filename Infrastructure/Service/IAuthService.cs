@@ -9,6 +9,6 @@ namespace Infrastructure.Service
 {
     public interface IAuthService
     {
-        Task<string> GenerateToken(User user);
+        Task<string> Authorize(string email, string password);
     }
 }

@@ -13,8 +13,10 @@ namespace Core
         [Key]
         public int DivisionId { get; set; }
         public string DivisionName { get; set; }
+        public string DivisionStatus { get; set; }
+        public string Description { get; set; }
         public int ProjectId { get; set; }
-        public int AgencyId { get; set; }
+        public int? AgencyId { get; set; }
        
         public virtual List<Property> Properties { get; set; }
     }
