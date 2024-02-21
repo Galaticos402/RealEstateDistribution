@@ -27,5 +27,10 @@ namespace API.Controllers
             _divisionRepository.Save();
             return Ok(division);
         }
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] int projectId)
+        {
+            return Ok(_divisionRepository.Filter(x => x.ProjectId == projectId));
+        }
     }
 }

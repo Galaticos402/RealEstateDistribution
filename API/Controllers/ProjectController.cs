@@ -35,7 +35,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOne(int id)
         {
-            var project = _projectRepository.Filter(x => x.ProjectId == id, 0, int.MaxValue, null, x => x.Include(p => p.Investor)).FirstOrDefault();
+            var project = _projectRepository.Filter(x => x.ProjectId == id, 0, int.MaxValue, null, x => x.Include(p => p.Investor).Include(p => p.Divisions)).FirstOrDefault();
             if(project == null)
             {
                 return BadRequest(new
