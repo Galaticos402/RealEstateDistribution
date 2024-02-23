@@ -32,5 +32,6 @@ namespace API.Controllers
         {
             return Ok(_divisionRepository.Filter(x => x.ProjectId == projectId));
         }
+        
     }
 }

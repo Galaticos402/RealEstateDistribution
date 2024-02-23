@@ -99,5 +99,10 @@ namespace Infrastructure.Repository
 
             return _resetSet.AsQueryable();
         }
+
+        public void InsertMulti(List<T> list)
+        {
+            table.AddRange(list);
+        }
     }
 }

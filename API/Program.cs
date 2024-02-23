@@ -14,7 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
 builder.Services.AddScoped<IGenericRepository<Project>, GenericRepository<Project>>();
 builder.Services.AddScoped<IGenericRepository<Division>, GenericRepository<Division>>();
+builder.Services.AddScoped<IGenericRepository<Property>, GenericRepository<Property>>();
+builder.Services.AddScoped<IGenericRepository<SaleBatch>, GenericRepository<SaleBatch>>();
+builder.Services.AddScoped<IGenericRepository<SaleBatchDetail>, GenericRepository<SaleBatchDetail>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ISaleBatchService, SaleBatchService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

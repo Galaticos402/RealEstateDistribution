@@ -13,6 +13,7 @@ namespace Infrastructure.Repository
         IEnumerable<T> GetAll();
         T GetById(object id);
         void Insert(T obj);
+        void InsertMulti(List<T> list);
         void Update(object id, T obj);
         void Delete(object id);
         void Save();
