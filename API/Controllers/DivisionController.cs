@@ -28,10 +28,19 @@ namespace API.Controllers
             return Ok(division);
         }
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int projectId)
+        public async Task<IActionResult> GetByProjectId([FromQuery] int projectId)
         {
             return Ok(_divisionRepository.Filter(x => x.ProjectId == projectId));
         }
-        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var division = _divisionRepository.GetById(id);
+            if(division == null) return BadRequest(new
+            {
+                Message = "Unable to find the division with that Id"
+            });
+            return Ok(division);
+        }
     }
 }

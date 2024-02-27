@@ -13,6 +13,7 @@ namespace Core
         [Key]
         public int SaleBatchId { get; set; }
         public string SaleBatchName { get; set; }
+        public decimal BookingFee { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         [JsonIgnore]

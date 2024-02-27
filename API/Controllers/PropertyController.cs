@@ -2,6 +2,7 @@
 using Core;
 using Infrastructure.DTOs.Property;
 using Infrastructure.Repository;
+using Infrastructure.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -12,10 +13,16 @@ namespace API.Controllers
     {
         private readonly IGenericRepository<Property> _propertyRepository;
         private readonly IMapper _mapper;
-        public PropertyController(IGenericRepository<Property> propertyRepository, IMapper mapper)
+        private readonly IPropertyService _propertyService;
+        public PropertyController(IGenericRepository<Property> propertyRepository, IMapper mapper, IPropertyService propertyService)
         {
             _propertyRepository = propertyRepository;        
             _mapper = mapper;
+            _propertyService = propertyService;
+        }
+        [HttpGet("findBySaleBatch")]
+        public async Task<IActionResult> GetBySaleBatch([FromQuery] int saleBatchId) {
+            return Ok(_propertyService.findPropertiesOfASaleBatch(saleBatchId));
         }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] PropertyCreationModel model)

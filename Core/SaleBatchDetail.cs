@@ -13,7 +13,9 @@ namespace Core
         public int SaleBatchDetailId { get; set; }
         public int SaleBatchId { get; set; }
         public int PropertyId { get; set; }
+        public decimal Price { get; set; }
         public virtual SaleBatch SaleBatch { get; set; }
+        public virtual Property Property { get; set; }
         public virtual List<Booking> Bookings { get; set; }
     }
 }

@@ -10,6 +10,6 @@ namespace Core
     {
         public int SaleBatchDetailId { get; set; }
         public int CustomerId { get; set; }
-        public decimal Price { get; set; }
+        public DateTime BookingDate { get; set; }
     }
 }

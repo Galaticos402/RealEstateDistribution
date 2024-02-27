@@ -23,7 +23,7 @@ namespace API.Controllers
             _saleBatchDetailRepository = saleBatchDetailRepository;
             _saleBatchService = saleBatchService;
         }
-        [HttpGet("getAvailabeSaleBatch")]
+        [HttpGet("getAvailableSaleBatch")]
         public async Task<IActionResult> GetAvailableSaleBatch([FromQuery] int divisionId)
         {
             return Ok(_saleBatchService.findAllOpenSaleBatchOfADivision(divisionId));

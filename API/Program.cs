@@ -19,6 +19,7 @@ builder.Services.AddScoped<IGenericRepository<SaleBatch>, GenericRepository<Sale
 builder.Services.AddScoped<IGenericRepository<SaleBatchDetail>, GenericRepository<SaleBatchDetail>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISaleBatchService, SaleBatchService>();
+builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
