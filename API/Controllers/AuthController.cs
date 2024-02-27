@@ -1,13 +1,16 @@
 ﻿using Infrastructure.DTOs;
 using Infrastructure.Service;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : ODataController
     {
         private readonly IAuthService _authService;
         public AuthController(IAuthService authService)
@@ -15,6 +18,7 @@ namespace API.Controllers
             _authService = authService;
         }
         [HttpPost]
+        //[EnableQuery]
         public async Task<IActionResult> Login([FromBody] UserLoginModel model)
         {
             try

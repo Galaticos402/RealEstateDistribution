@@ -2,15 +2,17 @@
 using Core;
 using Infrastructure.DTOs.Project;
 using Infrastructure.Repository;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectController : ControllerBase
+    public class ProjectController : ODataController
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Project> _projectRepository;
@@ -32,7 +34,7 @@ namespace API.Controllers
         {
             return Ok(_projectRepository.Filter(null, 0,int.MaxValue, null, x => x.Include(p => p.Investor)));
         }
-        [HttpGet("{id}")]
+        [HttpGet("({id})")]
         public async Task<IActionResult> GetOne(int id)
         {
             var project = _projectRepository.Filter(x => x.ProjectId == id, 0, int.MaxValue, null, x => x.Include(p => p.Investor).Include(p => p.Divisions)).FirstOrDefault();

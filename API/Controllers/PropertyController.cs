@@ -4,12 +4,13 @@ using Infrastructure.DTOs.Property;
 using Infrastructure.Repository;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PropertyController : ControllerBase
+    public class PropertyController : ODataController
     {
         private readonly IGenericRepository<Property> _propertyRepository;
         private readonly IMapper _mapper;

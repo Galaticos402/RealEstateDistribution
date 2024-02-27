@@ -3,14 +3,18 @@ using Core;
 using Infrastructure.DTOs.Division;
 using Infrastructure.DTOs.Project;
 using Infrastructure.Repository;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using System.Web.Http.OData.Routing;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DivisionController : ControllerBase
+    public class DivisionController : ODataController
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Division> _divisionRepository;

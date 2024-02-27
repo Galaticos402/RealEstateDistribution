@@ -4,7 +4,9 @@ using Core;
 using Infrastructure.Repository;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.OData;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
@@ -71,6 +73,28 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value))
         };
     });
+var modelBuilder = new ODataConventionModelBuilder();
+modelBuilder.EntitySet<Agency>("Agencies");
+var bookingEntitySet = modelBuilder.EntitySet<Booking>("Bookings");
+bookingEntitySet.EntityType.HasKey(bk => new { bk.CustomerId, bk.SaleBatchDetailId });
+modelBuilder.EntitySet<Customer>("Customers");
+modelBuilder.EntitySet<Division>("Divisions");
+modelBuilder.EntitySet<Investor>("Investors");
+modelBuilder.EntitySet<Project>("Projects");
+modelBuilder.EntitySet<Property>("Properties");
+modelBuilder.EntitySet<SaleBatch>("SaleBatches");
+modelBuilder.EntitySet<SaleBatchDetail>("SaleBatchDetails");
+
+builder.Services.AddControllers().AddOData(
+    options => options.Select()
+                        .Filter()
+                        .OrderBy()
+                        .Expand()
+                        .Count()
+                        .SetMaxTop(null)
+                        .EnableQueryFeatures(2)
+                        .AddRouteComponents("api", modelBuilder.GetEdmModel())
+);
 builder.Services.AddCors(option =>
 {
     option.AddPolicy(name: "AllowAllOrigin", policy =>

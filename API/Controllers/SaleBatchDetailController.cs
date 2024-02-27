@@ -2,12 +2,13 @@
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SaleBatchDetailController : ControllerBase
+    public class SaleBatchDetailController : ODataController
     {
         private readonly IGenericRepository<SaleBatchDetail> _saleBatchDetailRepository;
         public SaleBatchDetailController(IGenericRepository<SaleBatchDetail> saleBatchDetailRepository)
