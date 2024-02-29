@@ -30,8 +30,6 @@ namespace Core
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Booking>()
-                         .HasKey(b => new { b.SaleBatchDetailId, b.CustomerId });
             modelBuilder.Entity<User>()
                         .HasDiscriminator(u => u.Role);
             modelBuilder.Entity<Project>()
@@ -50,7 +48,11 @@ namespace Core
                          .WithMany(c => c.Bookings)
                          .HasForeignKey(b => b.CustomerId)
                          .OnDelete(DeleteBehavior.ClientCascade);
-           
+            modelBuilder.Entity<Booking>()
+                         .HasOne<SaleBatch>()
+                         .WithMany(sb => sb.Bookings)
+                         .HasForeignKey(b => b.SaleBatchId)
+                         .OnDelete(DeleteBehavior.ClientCascade);
         }
     }
 }

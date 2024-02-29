@@ -22,6 +22,7 @@ builder.Services.AddScoped<IGenericRepository<SaleBatchDetail>, GenericRepositor
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISaleBatchService, SaleBatchService>();
 builder.Services.AddScoped<IPropertyService, PropertyService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -76,7 +77,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 var modelBuilder = new ODataConventionModelBuilder();
 modelBuilder.EntitySet<Agency>("Agencies");
 var bookingEntitySet = modelBuilder.EntitySet<Booking>("Bookings");
-bookingEntitySet.EntityType.HasKey(bk => new { bk.CustomerId, bk.SaleBatchDetailId });
+bookingEntitySet.EntityType.HasKey(bk => new { bk.CustomerId, bk.SaleBatchId });
 modelBuilder.EntitySet<Customer>("Customers");
 modelBuilder.EntitySet<Division>("Divisions");
 modelBuilder.EntitySet<Investor>("Investors");

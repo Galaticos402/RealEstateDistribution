@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20240221110850_UpdateUserDiscriminator")]
-    partial class UpdateUserDiscriminator
+    [Migration("20240229031544_AddFieldIsPaidForBooking")]
+    partial class AddFieldIsPaidForBooking
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,18 +26,39 @@ namespace Core.Migrations
 
             modelBuilder.Entity("Core.Booking", b =>
                 {
-                    b.Property<int>("SaleBatchDetailId")
+                    b.Property<int>("BookingId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingId"), 1L, 1);
+
+                    b.Property<DateTime>("BookingDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("CustomerUserId")
+                        .HasColumnType("int");
 
-                    b.HasKey("SaleBatchDetailId", "CustomerId");
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SaleBatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SaleBatchId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookingId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("CustomerUserId");
+
+                    b.HasIndex("SaleBatchId");
+
+                    b.HasIndex("SaleBatchId1");
 
                     b.ToTable("Bookings");
                 });
@@ -50,10 +71,18 @@ namespace Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DivisionId"), 1L, 1);
 
-                    b.Property<int>("AgencyId")
+                    b.Property<int?>("AgencyId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DivisionName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DivisionStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -77,10 +106,45 @@ namespace Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"), 1L, 1);
 
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BuildingContractor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IntroPageLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("InvestorId")
                         .HasColumnType("int");
 
+                    b.Property<string>("JuridicalStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Scale")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -98,6 +162,18 @@ namespace Core.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PropertyId"), 1L, 1);
+
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Brief")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DivisionId")
                         .HasColumnType("int");
@@ -121,8 +197,15 @@ namespace Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleBatchId"), 1L, 1);
 
+                    b.Property<decimal>("BookingFee")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("SaleBatchName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -139,6 +222,9 @@ namespace Core.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleBatchDetailId"), 1L, 1);
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("PropertyId")
                         .HasColumnType("int");
@@ -223,11 +309,27 @@ namespace Core.Migrations
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("Core.SaleBatchDetail", null)
-                        .WithMany("Bookings")
-                        .HasForeignKey("SaleBatchDetailId")
+                    b.HasOne("Core.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Core.SaleBatch", null)
+                        .WithMany("Bookings")
+                        .HasForeignKey("SaleBatchId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.SaleBatch", "SaleBatch")
+                        .WithMany()
+                        .HasForeignKey("SaleBatchId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("SaleBatch");
                 });
 
             modelBuilder.Entity("Core.Division", b =>
@@ -235,8 +337,7 @@ namespace Core.Migrations
                     b.HasOne("Core.Agency", null)
                         .WithMany("Divisions")
                         .HasForeignKey("AgencyId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
                     b.HasOne("Core.Project", null)
                         .WithMany("Divisions")
@@ -247,11 +348,13 @@ namespace Core.Migrations
 
             modelBuilder.Entity("Core.Project", b =>
                 {
-                    b.HasOne("Core.Investor", null)
+                    b.HasOne("Core.Investor", "Investor")
                         .WithMany("Projects")
                         .HasForeignKey("InvestorId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
+
+                    b.Navigation("Investor");
                 });
 
             modelBuilder.Entity("Core.Property", b =>
@@ -265,17 +368,21 @@ namespace Core.Migrations
 
             modelBuilder.Entity("Core.SaleBatchDetail", b =>
                 {
-                    b.HasOne("Core.Property", null)
+                    b.HasOne("Core.Property", "Property")
                         .WithMany("SaleBatchDetails")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.SaleBatch", null)
+                    b.HasOne("Core.SaleBatch", "SaleBatch")
                         .WithMany("SaleBatchDetails")
                         .HasForeignKey("SaleBatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Property");
+
+                    b.Navigation("SaleBatch");
                 });
 
             modelBuilder.Entity("Core.Division", b =>
@@ -295,12 +402,9 @@ namespace Core.Migrations
 
             modelBuilder.Entity("Core.SaleBatch", b =>
                 {
-                    b.Navigation("SaleBatchDetails");
-                });
-
-            modelBuilder.Entity("Core.SaleBatchDetail", b =>
-                {
                     b.Navigation("Bookings");
+
+                    b.Navigation("SaleBatchDetails");
                 });
 
             modelBuilder.Entity("Core.Agency", b =>

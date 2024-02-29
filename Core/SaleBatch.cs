@@ -18,5 +18,7 @@ namespace Core
         public DateTime EndDate { get; set; }
         [JsonIgnore]
         public virtual List<SaleBatchDetail> SaleBatchDetails { get; set; }
+        [JsonIgnore]
+        public virtual List<Booking> Bookings { get; set; }
     }
 }

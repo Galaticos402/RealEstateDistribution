@@ -24,18 +24,39 @@ namespace Core.Migrations
 
             modelBuilder.Entity("Core.Booking", b =>
                 {
-                    b.Property<int>("SaleBatchDetailId")
+                    b.Property<int>("BookingId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingId"), 1L, 1);
 
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("SaleBatchDetailId", "CustomerId");
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SaleBatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SaleBatchId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookingId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("CustomerUserId");
+
+                    b.HasIndex("SaleBatchId");
+
+                    b.HasIndex("SaleBatchId1");
 
                     b.ToTable("Bookings");
                 });
@@ -286,11 +307,27 @@ namespace Core.Migrations
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("Core.SaleBatchDetail", null)
-                        .WithMany("Bookings")
-                        .HasForeignKey("SaleBatchDetailId")
+                    b.HasOne("Core.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Core.SaleBatch", null)
+                        .WithMany("Bookings")
+                        .HasForeignKey("SaleBatchId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.SaleBatch", "SaleBatch")
+                        .WithMany()
+                        .HasForeignKey("SaleBatchId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("SaleBatch");
                 });
 
             modelBuilder.Entity("Core.Division", b =>
@@ -363,12 +400,9 @@ namespace Core.Migrations
 
             modelBuilder.Entity("Core.SaleBatch", b =>
                 {
-                    b.Navigation("SaleBatchDetails");
-                });
-
-            modelBuilder.Entity("Core.SaleBatchDetail", b =>
-                {
                     b.Navigation("Bookings");
+
+                    b.Navigation("SaleBatchDetails");
                 });
 
             modelBuilder.Entity("Core.Agency", b =>

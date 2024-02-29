@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Core.Migrations
 {
-    public partial class InitDb : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,6 +15,8 @@ namespace Core.Migrations
                 {
                     SaleBatchId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    SaleBatchName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BookingFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -34,11 +36,48 @@ namespace Core.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bookings",
+                columns: table => new
+                {
+                    SaleBatchId = table.Column<int>(type: "int", nullable: false),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SaleBatchId1 = table.Column<int>(type: "int", nullable: false),
+                    CustomerUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookings", x => new { x.SaleBatchId, x.CustomerId });
+                    table.ForeignKey(
+                        name: "FK_Bookings_SaleBatches_SaleBatchId",
+                        column: x => x.SaleBatchId,
+                        principalTable: "SaleBatches",
+                        principalColumn: "SaleBatchId");
+                    table.ForeignKey(
+                        name: "FK_Bookings_SaleBatches_SaleBatchId1",
+                        column: x => x.SaleBatchId1,
+                        principalTable: "SaleBatches",
+                        principalColumn: "SaleBatchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Users_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_Bookings_Users_CustomerUserId",
+                        column: x => x.CustomerUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,6 +87,15 @@ namespace Core.Migrations
                     ProjectId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BuildingContractor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Area = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Scale = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    JuridicalStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IntroPageLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     InvestorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -67,8 +115,10 @@ namespace Core.Migrations
                     DivisionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DivisionName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DivisionStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
-                    AgencyId = table.Column<int>(type: "int", nullable: false)
+                    AgencyId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -93,6 +143,9 @@ namespace Core.Migrations
                     PropertyId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PropertyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Brief = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Area = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DivisionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -113,7 +166,8 @@ namespace Core.Migrations
                     SaleBatchDetailId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SaleBatchId = table.Column<int>(type: "int", nullable: false),
-                    PropertyId = table.Column<int>(type: "int", nullable: false)
+                    PropertyId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -132,34 +186,20 @@ namespace Core.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Bookings",
-                columns: table => new
-                {
-                    SaleBatchDetailId = table.Column<int>(type: "int", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bookings", x => new { x.SaleBatchDetailId, x.CustomerId });
-                    table.ForeignKey(
-                        name: "FK_Bookings_SaleBatchDetails_SaleBatchDetailId",
-                        column: x => x.SaleBatchDetailId,
-                        principalTable: "SaleBatchDetails",
-                        principalColumn: "SaleBatchDetailId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Bookings_Users_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_CustomerId",
                 table: "Bookings",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_CustomerUserId",
+                table: "Bookings",
+                column: "CustomerUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_SaleBatchId1",
+                table: "Bookings",
+                column: "SaleBatchId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Divisions_AgencyId",

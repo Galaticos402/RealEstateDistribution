@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Infrastructure.DTOs.Booking;
 using Infrastructure.DTOs.Division;
 using Infrastructure.DTOs.Project;
 using Infrastructure.DTOs.Property;
@@ -22,6 +23,9 @@ namespace API.Extensions
 
             CreateMap<SaleBatch, SaleBatchCreationModel>();
             CreateMap<SaleBatchCreationModel, SaleBatch>();
+
+            CreateMap<Booking, BookingCreationModel>();
+            CreateMap<BookingCreationModel, Booking>();
         }
     }
 }
