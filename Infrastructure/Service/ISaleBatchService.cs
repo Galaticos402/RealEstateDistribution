@@ -9,6 +9,8 @@ namespace Infrastructure.Service
 {
     public interface ISaleBatchService 
     {
-        public List<SaleBatch> findAllOpenSaleBatchOfADivision(int divisionId);
+        public List<SaleBatch> findAvailableSaleBatchOfADivision(int divisionId);
+        public List<SaleBatch> findOpeningSaleBatchOfADivision(int divisionId);
+        public List<SaleBatch> findUpcomingSaleBatchOfADivision(int divisionId);
     }
 }

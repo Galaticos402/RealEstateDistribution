@@ -4,6 +4,7 @@ using Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20240302123629_AddMoreFieldToSaleBatch")]
+    partial class AddMoreFieldToSaleBatch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,17 +38,27 @@ namespace Core.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CustomerUserId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
                     b.Property<int>("SaleBatchId")
                         .HasColumnType("int");
 
+                    b.Property<int>("SaleBatchId1")
+                        .HasColumnType("int");
+
                     b.HasKey("BookingId");
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("CustomerUserId");
+
                     b.HasIndex("SaleBatchId");
+
+                    b.HasIndex("SaleBatchId1");
 
                     b.ToTable("Bookings");
                 });
@@ -306,15 +318,27 @@ namespace Core.Migrations
 
             modelBuilder.Entity("Core.Booking", b =>
                 {
-                    b.HasOne("Core.Customer", "Customer")
+                    b.HasOne("Core.Customer", null)
                         .WithMany("Bookings")
                         .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.SaleBatch", "SaleBatch")
+                    b.HasOne("Core.SaleBatch", null)
                         .WithMany("Bookings")
                         .HasForeignKey("SaleBatchId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.SaleBatch", "SaleBatch")
+                        .WithMany()
+                        .HasForeignKey("SaleBatchId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

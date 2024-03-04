@@ -18,7 +18,7 @@ namespace Infrastructure.Service
             _divisionRepository = divisionRepository;
         }
         //private readonly IGenericRepository<Property> _propertyRepository;
-        public List<SaleBatch> findAllOpenSaleBatchOfADivision(int divisionId)
+        public List<SaleBatch> findAvailableSaleBatchOfADivision(int divisionId)
         {
             List<SaleBatch> result = new List<SaleBatch>();
             var division = _divisionRepository.Filter(x => x.DivisionId == divisionId, 
@@ -35,16 +35,66 @@ namespace Infrastructure.Service
                 {
                     if(saleBatchDetail == null || saleBatchDetail.SaleBatch == null) continue;
                     var saleBatch = saleBatchDetail.SaleBatch;
-                    var today = DateTime.Now;
-                    if(saleBatch.EndDate > today)
+                    result.Add(saleBatch);
+
+                }
+            }
+            return result.OrderBy(res => res.StartDate).ToList();
+            
+        }
+
+        public List<SaleBatch> findOpeningSaleBatchOfADivision(int divisionId)
+        {
+            var today = DateTime.Now;
+            List<SaleBatch> result = new List<SaleBatch>();
+            var division = _divisionRepository.Filter(x => x.DivisionId == divisionId,
+                                                        0,
+                                                        int.MaxValue,
+                                                        null,
+                                                        x => x.Include(p => p.Properties).ThenInclude(k => k.SaleBatchDetails).ThenInclude(t => t.SaleBatch)).FirstOrDefault();
+            if (division == null || division.Properties.Count == 0) return new List<SaleBatch>();
+
+            foreach (var property in division.Properties)
+            {
+                if (property == null || property.SaleBatchDetails.Count == 0) continue;
+                foreach (var saleBatchDetail in property.SaleBatchDetails)
+                {
+                    if (saleBatchDetail == null || saleBatchDetail.SaleBatch == null) continue;
+                    var saleBatch = saleBatchDetail.SaleBatch;
+                    if(saleBatch.StartDate <= today && today <= saleBatch.EndDate)
                     {
                         result.Add(saleBatch);
                     }
-                    
                 }
             }
-            return result;
-            
+            return result.OrderBy(res => res.StartDate).ToList();
+        }
+
+        public List<SaleBatch> findUpcomingSaleBatchOfADivision(int divisionId)
+        {
+            var today = DateTime.Now;
+            List<SaleBatch> result = new List<SaleBatch>();
+            var division = _divisionRepository.Filter(x => x.DivisionId == divisionId,
+                                                        0,
+                                                        int.MaxValue,
+                                                        null,
+                                                        x => x.Include(p => p.Properties).ThenInclude(k => k.SaleBatchDetails).ThenInclude(t => t.SaleBatch)).FirstOrDefault();
+            if (division == null || division.Properties.Count == 0) return new List<SaleBatch>();
+
+            foreach (var property in division.Properties)
+            {
+                if (property == null || property.SaleBatchDetails.Count == 0) continue;
+                foreach (var saleBatchDetail in property.SaleBatchDetails)
+                {
+                    if (saleBatchDetail == null || saleBatchDetail.SaleBatch == null) continue;
+                    var saleBatch = saleBatchDetail.SaleBatch;
+                    if (saleBatch.StartDate > today)
+                    {
+                        result.Add(saleBatch);
+                    }
+                }
+            }
+            return result.OrderBy(res => res.StartDate).ToList();
         }
     }
 }

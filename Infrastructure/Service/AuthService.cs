@@ -2,11 +2,13 @@
 using Infrastructure.Exceptions;
 using Infrastructure.Repository;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +18,13 @@ namespace Infrastructure.Service
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IGenericRepository<User> _userRepository;
-        public AuthService(IConfiguration configuration, IGenericRepository<User> userRepository)
+        public AuthService(IConfiguration configuration, IGenericRepository<User> userRepository, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
             _userRepository = userRepository;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<string> Authorize(string email, string password)
@@ -50,6 +54,26 @@ namespace Infrastructure.Service
 
                        signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        public int? GetCurrentUserId(string authHeader)
+        {
+            if(authHeader == null) return null;
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = authHeader.Replace("Bearer ", "");
+            var token = handler.ReadToken(jwtToken) as JwtSecurityToken;
+            if(token == null)
+            {
+                return null;
+            }
+            var userIdObj = token.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
+            if(userIdObj == null)
+            {
+                return null;
+            }
+            int userId = -1;
+            int.TryParse(userIdObj.Value, out userId);
+
+            return userId;
         }
     }
 }

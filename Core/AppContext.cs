@@ -43,16 +43,16 @@ namespace Core
                           .HasForeignKey(d => d.AgencyId)
                           .IsRequired(false)
                           .OnDelete(DeleteBehavior.ClientCascade);
-            modelBuilder.Entity<Booking>()
-                         .HasOne<Customer>()
-                         .WithMany(c => c.Bookings)
-                         .HasForeignKey(b => b.CustomerId)
-                         .OnDelete(DeleteBehavior.ClientCascade);
-            modelBuilder.Entity<Booking>()
-                         .HasOne<SaleBatch>()
-                         .WithMany(sb => sb.Bookings)
-                         .HasForeignKey(b => b.SaleBatchId)
-                         .OnDelete(DeleteBehavior.ClientCascade);
+            //modelBuilder.Entity<Booking>()
+            //             .HasOne<Customer>()
+            //             .WithMany(c => c.Bookings)
+            //             .HasForeignKey(b => b.CustomerId)
+            //             .OnDelete(DeleteBehavior.ClientCascade);
+            //modelBuilder.Entity<Booking>()
+            //             .HasOne<SaleBatch>()
+            //             .WithMany(sb => sb.Bookings)
+            //             .HasForeignKey(b => b.SaleBatchId)
+            //             .OnDelete(DeleteBehavior.ClientCascade);
         }
     }
 }

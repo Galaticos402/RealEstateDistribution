@@ -8,8 +8,7 @@ namespace Infrastructure.DTOs.Booking
 {
     public class BookingCreationModel
     {
-        public int SaleBatchDetailId { get; set; }
-        public int CustomerId { get; set; }
-        public DateTime BookingDate { get; set; }
+        public int SaleBatchId { get; set; }
+        public bool IsPaid { get; set; }
     }
 }

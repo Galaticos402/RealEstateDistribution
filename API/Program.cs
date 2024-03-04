@@ -19,9 +19,11 @@ builder.Services.AddScoped<IGenericRepository<Division>, GenericRepository<Divis
 builder.Services.AddScoped<IGenericRepository<Property>, GenericRepository<Property>>();
 builder.Services.AddScoped<IGenericRepository<SaleBatch>, GenericRepository<SaleBatch>>();
 builder.Services.AddScoped<IGenericRepository<SaleBatchDetail>, GenericRepository<SaleBatchDetail>>();
+builder.Services.AddScoped<IGenericRepository<Booking>, GenericRepository<Booking>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISaleBatchService, SaleBatchService>();
 builder.Services.AddScoped<IPropertyService, PropertyService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

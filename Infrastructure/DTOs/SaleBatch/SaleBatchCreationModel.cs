@@ -9,6 +9,8 @@ namespace Infrastructure.DTOs.SaleBatch
     public class SaleBatchCreationModel
     {
         public string SaleBatchName { get; set; }
+        public decimal BookingFee { get; set; }
+        public DateTime PremiumStartDate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
     }

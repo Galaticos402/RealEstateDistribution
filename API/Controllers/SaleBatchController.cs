@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core;
 using Infrastructure.DTOs.SaleBatch;
+using Infrastructure.Enum;
 using Infrastructure.Repository;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Http;
@@ -25,9 +26,21 @@ namespace API.Controllers
             _saleBatchService = saleBatchService;
         }
         [HttpGet("getAvailableSaleBatch")]
-        public async Task<IActionResult> GetAvailableSaleBatch([FromQuery] int divisionId)
+        public async Task<IActionResult> GetAvailableSaleBatch([FromQuery] int divisionId, string? status)
         {
-            return Ok(_saleBatchService.findAllOpenSaleBatchOfADivision(divisionId));
+            if(status == null)
+            {
+                return Ok(_saleBatchService.findAvailableSaleBatchOfADivision(divisionId));
+            }
+            if(status == SaleBatchStatus.OPENING)
+            {
+                return Ok(_saleBatchService.findOpeningSaleBatchOfADivision(divisionId));
+            }
+            if(status == SaleBatchStatus.UPCOMING)
+            {
+                return Ok(_saleBatchService.findUpcomingSaleBatchOfADivision(divisionId));
+            }
+            return Ok(_saleBatchService.findAvailableSaleBatchOfADivision(divisionId));
         }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SaleBatchCreationModel model)

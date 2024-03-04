@@ -1,4 +1,5 @@
 ﻿using Core;
+using Infrastructure.DTOs.Booking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Service
 {
-    public interface IAuthService
+    public interface IBookingService
     {
-        Task<string> Authorize(string email, string password);
-        int? GetCurrentUserId(string authHeader);
+        void Create(Booking model);
     }
 }
