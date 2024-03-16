@@ -20,6 +20,8 @@ namespace Core
         public virtual DbSet<SaleBatchDetail> SaleBatchDetails { get; set; }
         public virtual DbSet<SaleBatch> SaleBatches { get; set; }
         public virtual DbSet<Booking> Bookings { get; set; }
+        public virtual DbSet<Contract> Contracts { get; set; }
+        public virtual DbSet<PaymentRecord> PaymentRecords { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

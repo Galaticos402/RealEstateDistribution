@@ -47,7 +47,8 @@ namespace Infrastructure.Service
                 //new Claim(ClaimTypes.NameIdentifier, model.MemberEmail),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role),
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+                new Claim("Roles", user.Role)
             };
             var token = new JwtSecurityToken(_configuration.GetSection("Jwt:Issuer").Value, _configuration.GetSection("Jwt:Audience").Value, claims,
                        expires: DateTime.Now.AddMinutes(60),

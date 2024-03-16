@@ -4,6 +4,7 @@ using Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20240306170353_AddContractAndPaymentRecord")]
+    partial class AddContractAndPaymentRecord
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,9 +226,6 @@ namespace Core.Migrations
 
                     b.Property<int>("DivisionId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsSold")
-                        .HasColumnType("bit");
 
                     b.Property<string>("PropertyName")
                         .IsRequired()

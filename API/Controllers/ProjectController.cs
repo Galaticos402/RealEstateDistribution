@@ -2,7 +2,9 @@
 using Core;
 using Infrastructure.DTOs.Project;
 using Infrastructure.Repository;
+using Infrastructure.Service;
 using Microsoft.AspNet.OData.Routing;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -16,10 +18,12 @@ namespace API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Project> _projectRepository;
-        public ProjectController(IMapper mapper, IGenericRepository<Project> projectRepository)
+        private readonly IAuthService _authService;
+        public ProjectController(IMapper mapper, IGenericRepository<Project> projectRepository, IAuthService authService)
         {
             _mapper = mapper;
             _projectRepository = projectRepository;
+            _authService = authService;
         }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProjectCreationModel model)
@@ -46,6 +50,23 @@ namespace API.Controllers
                 });
             }
             return Ok(project);
+        }
+        [Authorize(Roles = "Investor")]
+        [HttpGet("findByInvestorId")]
+        public async Task<IActionResult> GetProjectOfAnInvestor()
+        {
+            var header = this.Request.Headers;
+            var token = header["Authorization"];
+            var userId = _authService.GetCurrentUserId(token);
+            if (userId == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Cannot find requesting user"
+                });
+            }
+            var projects = _projectRepository.Filter(x => x.InvestorId == userId).ToList();
+            return Ok(projects);
         }
     }
 }

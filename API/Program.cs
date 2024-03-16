@@ -20,11 +20,17 @@ builder.Services.AddScoped<IGenericRepository<Property>, GenericRepository<Prope
 builder.Services.AddScoped<IGenericRepository<SaleBatch>, GenericRepository<SaleBatch>>();
 builder.Services.AddScoped<IGenericRepository<SaleBatchDetail>, GenericRepository<SaleBatchDetail>>();
 builder.Services.AddScoped<IGenericRepository<Booking>, GenericRepository<Booking>>();
+builder.Services.AddScoped<IGenericRepository<Contract>, GenericRepository<Contract>>();
+builder.Services.AddScoped<IGenericRepository<PaymentRecord>, GenericRepository<PaymentRecord>>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISaleBatchService, SaleBatchService>();
 builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
+builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<IPaymentRecordService, PaymentRecordService>();
+builder.Services.AddScoped<ISaleBatchDetailService, SaleBatchDetailService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -116,6 +122,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

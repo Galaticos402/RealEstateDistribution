@@ -25,6 +25,11 @@ namespace API.Controllers
         public async Task<IActionResult> GetBySaleBatch([FromQuery] int saleBatchId) {
             return Ok(_propertyService.findPropertiesOfASaleBatch(saleBatchId));
         }
+        [HttpGet("findByDivision")]
+        public async Task<IActionResult> GetByDivision([FromQuery] int divisionId)
+        {
+            return Ok(_propertyService.findByDivisionId(divisionId));
+        }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] PropertyCreationModel model)
         {

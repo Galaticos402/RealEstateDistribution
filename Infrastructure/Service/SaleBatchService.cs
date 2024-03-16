@@ -13,14 +13,20 @@ namespace Infrastructure.Service
     {
         //private readonly IGenericRepository<SaleBatch> _saleBatchRepository;
         private readonly IGenericRepository<Division> _divisionRepository;
-        public SaleBatchService(IGenericRepository<Division> divisionRepository)
+        private readonly ISaleBatchDetailService _saleBatchDetailService;
+        private readonly IPropertyService _propertyService;
+        public SaleBatchService(IGenericRepository<Division> divisionRepository, ISaleBatchDetailService saleBatchDetailService, IPropertyService propertyService)
         {
             _divisionRepository = divisionRepository;
+            _saleBatchDetailService = saleBatchDetailService;
+            _propertyService = propertyService;
+
         }
         //private readonly IGenericRepository<Property> _propertyRepository;
         public List<SaleBatch> findAvailableSaleBatchOfADivision(int divisionId)
         {
             List<SaleBatch> result = new List<SaleBatch>();
+            
             var division = _divisionRepository.Filter(x => x.DivisionId == divisionId, 
                                                         0, 
                                                         int.MaxValue, 
@@ -36,7 +42,6 @@ namespace Infrastructure.Service
                     if(saleBatchDetail == null || saleBatchDetail.SaleBatch == null) continue;
                     var saleBatch = saleBatchDetail.SaleBatch;
                     result.Add(saleBatch);
-
                 }
             }
             return result.OrderBy(res => res.StartDate).ToList();

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core;
 using Infrastructure.DTOs.Booking;
+using Infrastructure.DTOs.Contract;
 using Infrastructure.DTOs.Division;
 using Infrastructure.DTOs.Project;
 using Infrastructure.DTOs.Property;
@@ -26,6 +27,9 @@ namespace API.Extensions
 
             CreateMap<Booking, BookingCreationModel>();
             CreateMap<BookingCreationModel, Booking>();
+
+            CreateMap<Contract, ContractCreationModel>();
+            CreateMap<ContractCreationModel, Contract>();
         }
     }
 }

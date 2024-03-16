@@ -16,6 +16,7 @@ namespace Core
         public string Brief { get; set; }
         public string Area { get; set; }
         public string Description { get; set; }
+        public bool IsSold { get; set; }
         public int DivisionId { get; set; }
         [JsonIgnore]
         public virtual List<SaleBatchDetail> SaleBatchDetails { get; set; }

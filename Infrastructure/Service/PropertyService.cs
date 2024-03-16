@@ -1,4 +1,5 @@
 ﻿using Core;
+using Infrastructure.Exceptions;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,6 +19,12 @@ namespace Infrastructure.Service
             _saleBatchDetailRepository = saleBatchDetailRepository;
             _propertyRepository = propertyRepository;
         }
+
+        public List<Property> findByDivisionId(int divisionId)
+        {
+            return _propertyRepository.Filter(x => x.DivisionId == divisionId).ToList();
+        }
+
         public List<Property> findPropertiesOfASaleBatch(int saleBatchId)
         {
             List<Property> properties = new List<Property>();
@@ -28,6 +35,27 @@ namespace Infrastructure.Service
                 properties.Add(saleBatchDetail.Property);
             }
             return properties;
+        }
+
+        public bool isPropertySold(int propertyId)
+        {
+            var property = _propertyRepository.GetById(propertyId);
+            return property.IsSold;
+        }
+
+        public void updatePropertySoldStatus(int propertyId, bool soldStatus)
+        {
+            var property = _propertyRepository.GetById(propertyId);
+            if (property == null)
+            {
+                throw new DBTransactionException("Cannot find property");
+            }
+            else
+            {
+                property.IsSold = soldStatus;
+                _propertyRepository.Update(propertyId, property);
+                _propertyRepository.Save();
+            }
         }
     }
 }
