@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20240229101337_AddFieldPremiumDateForSaleBatch")]
-    partial class AddFieldPremiumDateForSaleBatch
+    [Migration("20240316111724_InitialDB")]
+    partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,29 +38,51 @@ namespace Core.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CustomerUserId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
                     b.Property<int>("SaleBatchId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SaleBatchId1")
-                        .HasColumnType("int");
-
                     b.HasKey("BookingId");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("CustomerUserId");
-
                     b.HasIndex("SaleBatchId");
 
-                    b.HasIndex("SaleBatchId1");
-
                     b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("Core.Contract", b =>
+                {
+                    b.Property<int>("ContractId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractId"), 1L, 1);
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ListedPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Period")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ContractId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("Contracts");
                 });
 
             modelBuilder.Entity("Core.Division", b =>
@@ -96,6 +118,33 @@ namespace Core.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Divisions");
+                });
+
+            modelBuilder.Entity("Core.PaymentRecord", b =>
+                {
+                    b.Property<int>("PaymentRecordId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentRecordId"), 1L, 1);
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ContractId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("PaymentRecordId");
+
+                    b.HasIndex("ContractId");
+
+                    b.ToTable("PaymentRecords");
                 });
 
             modelBuilder.Entity("Core.Project", b =>
@@ -178,6 +227,9 @@ namespace Core.Migrations
                     b.Property<int>("DivisionId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsSold")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PropertyName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -197,6 +249,14 @@ namespace Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleBatchId"), 1L, 1);
 
+                    b.Property<string>("BankAccount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("BookingFee")
                         .HasColumnType("decimal(18,2)");
 
@@ -205,6 +265,10 @@ namespace Core.Migrations
 
                     b.Property<DateTime>("PremiumStartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ReceiverName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SaleBatchName")
                         .IsRequired()
@@ -306,33 +370,40 @@ namespace Core.Migrations
 
             modelBuilder.Entity("Core.Booking", b =>
                 {
-                    b.HasOne("Core.Customer", null)
+                    b.HasOne("Core.Customer", "Customer")
                         .WithMany("Bookings")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
-                    b.HasOne("Core.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.SaleBatch", null)
+                    b.HasOne("Core.SaleBatch", "SaleBatch")
                         .WithMany("Bookings")
                         .HasForeignKey("SaleBatchId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
-                    b.HasOne("Core.SaleBatch", "SaleBatch")
-                        .WithMany()
-                        .HasForeignKey("SaleBatchId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
 
                     b.Navigation("SaleBatch");
+                });
+
+            modelBuilder.Entity("Core.Contract", b =>
+                {
+                    b.HasOne("Core.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("Core.Division", b =>
@@ -347,6 +418,17 @@ namespace Core.Migrations
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.PaymentRecord", b =>
+                {
+                    b.HasOne("Core.Contract", "Contract")
+                        .WithMany("PaymentRecords")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
                 });
 
             modelBuilder.Entity("Core.Project", b =>
@@ -386,6 +468,11 @@ namespace Core.Migrations
                     b.Navigation("Property");
 
                     b.Navigation("SaleBatch");
+                });
+
+            modelBuilder.Entity("Core.Contract", b =>
+                {
+                    b.Navigation("PaymentRecords");
                 });
 
             modelBuilder.Entity("Core.Division", b =>

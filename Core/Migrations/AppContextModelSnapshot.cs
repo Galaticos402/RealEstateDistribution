@@ -51,6 +51,38 @@ namespace Core.Migrations
                     b.ToTable("Bookings");
                 });
 
+            modelBuilder.Entity("Core.Contract", b =>
+                {
+                    b.Property<int>("ContractId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractId"), 1L, 1);
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ListedPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Period")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ContractId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("Contracts");
+                });
+
             modelBuilder.Entity("Core.Division", b =>
                 {
                     b.Property<int>("DivisionId")

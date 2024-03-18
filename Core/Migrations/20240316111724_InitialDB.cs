@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Core.Migrations
 {
-    public partial class Init : Migration
+    public partial class InitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,8 +17,12 @@ namespace Core.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SaleBatchName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BookingFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PremiumStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BankAccount = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BankName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReceiverName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,34 +51,25 @@ namespace Core.Migrations
                 name: "Bookings",
                 columns: table => new
                 {
+                    BookingId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     SaleBatchId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
-                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SaleBatchId1 = table.Column<int>(type: "int", nullable: false),
-                    CustomerUserId = table.Column<int>(type: "int", nullable: false)
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
+                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => new { x.SaleBatchId, x.CustomerId });
+                    table.PrimaryKey("PK_Bookings", x => x.BookingId);
                     table.ForeignKey(
                         name: "FK_Bookings_SaleBatches_SaleBatchId",
                         column: x => x.SaleBatchId,
-                        principalTable: "SaleBatches",
-                        principalColumn: "SaleBatchId");
-                    table.ForeignKey(
-                        name: "FK_Bookings_SaleBatches_SaleBatchId1",
-                        column: x => x.SaleBatchId1,
                         principalTable: "SaleBatches",
                         principalColumn: "SaleBatchId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Bookings_Users_CustomerId",
                         column: x => x.CustomerId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Bookings_Users_CustomerUserId",
-                        column: x => x.CustomerUserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -146,6 +141,7 @@ namespace Core.Migrations
                     Brief = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Area = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsSold = table.Column<bool>(type: "bit", nullable: false),
                     DivisionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -156,6 +152,35 @@ namespace Core.Migrations
                         column: x => x.DivisionId,
                         principalTable: "Divisions",
                         principalColumn: "DivisionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Contracts",
+                columns: table => new
+                {
+                    ContractId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    PropertyId = table.Column<int>(type: "int", nullable: false),
+                    ListedPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Duration = table.Column<int>(type: "int", nullable: false),
+                    Period = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contracts", x => x.ContractId);
+                    table.ForeignKey(
+                        name: "FK_Contracts_Properties_PropertyId",
+                        column: x => x.PropertyId,
+                        principalTable: "Properties",
+                        principalColumn: "PropertyId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Contracts_Users_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -186,20 +211,47 @@ namespace Core.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PaymentRecords",
+                columns: table => new
+                {
+                    PaymentRecordId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContractId = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentRecords", x => x.PaymentRecordId);
+                    table.ForeignKey(
+                        name: "FK_PaymentRecords_Contracts_ContractId",
+                        column: x => x.ContractId,
+                        principalTable: "Contracts",
+                        principalColumn: "ContractId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_CustomerId",
                 table: "Bookings",
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_CustomerUserId",
+                name: "IX_Bookings_SaleBatchId",
                 table: "Bookings",
-                column: "CustomerUserId");
+                column: "SaleBatchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_SaleBatchId1",
-                table: "Bookings",
-                column: "SaleBatchId1");
+                name: "IX_Contracts_CustomerId",
+                table: "Contracts",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contracts_PropertyId",
+                table: "Contracts",
+                column: "PropertyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Divisions_AgencyId",
@@ -210,6 +262,11 @@ namespace Core.Migrations
                 name: "IX_Divisions_ProjectId",
                 table: "Divisions",
                 column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentRecords_ContractId",
+                table: "PaymentRecords",
+                column: "ContractId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_InvestorId",
@@ -238,13 +295,19 @@ namespace Core.Migrations
                 name: "Bookings");
 
             migrationBuilder.DropTable(
+                name: "PaymentRecords");
+
+            migrationBuilder.DropTable(
                 name: "SaleBatchDetails");
 
             migrationBuilder.DropTable(
-                name: "Properties");
+                name: "Contracts");
 
             migrationBuilder.DropTable(
                 name: "SaleBatches");
+
+            migrationBuilder.DropTable(
+                name: "Properties");
 
             migrationBuilder.DropTable(
                 name: "Divisions");
