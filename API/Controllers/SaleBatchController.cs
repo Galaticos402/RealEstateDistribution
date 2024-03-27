@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core;
 using Infrastructure.DTOs.SaleBatch;
+using Infrastructure.DTOs.SaleBatchDetail;
 using Infrastructure.Enum;
 using Infrastructure.Repository;
 using Infrastructure.Service;
@@ -60,14 +61,14 @@ namespace API.Controllers
             }
         }
         [HttpPost("assignProperty")]
-        public async Task<IActionResult> AssignPropertiesToSaleBatch([FromQuery] int saleBatchId, [FromBody] List<int> propertiesId)
+        public async Task<IActionResult> AssignPropertiesToSaleBatch([FromQuery] int saleBatchId, [FromBody] List<SaleBatchDetailCreationModel> models)
         {
             var saleBatch = _saleBatchRepository.GetById(saleBatchId);
             if (saleBatch == null) return BadRequest(new { Message = "Sale batch does not exist" });
             List<SaleBatchDetail> saleBatchDetails = new List<SaleBatchDetail>();
-            foreach(var propertyId in propertiesId)
+            foreach(var model in models)
             {
-                saleBatchDetails.Add(new SaleBatchDetail { PropertyId = propertyId, SaleBatchId = saleBatchId });
+                saleBatchDetails.Add(new SaleBatchDetail { PropertyId = model.PropertyId, SaleBatchId = saleBatchId, Price = model.Price });
             }
             try
             {

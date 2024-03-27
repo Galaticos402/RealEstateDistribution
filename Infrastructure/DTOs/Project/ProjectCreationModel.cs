@@ -17,7 +17,5 @@ namespace Infrastructure.DTOs.Project
         public string JuridicalStatus { get; set; }
         public string IntroPageLink { get; set; }
         public string ProjectStatus { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int InvestorId { get; set; }
     }
 }

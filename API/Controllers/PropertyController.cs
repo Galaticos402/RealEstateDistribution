@@ -3,6 +3,7 @@ using Core;
 using Infrastructure.DTOs.Property;
 using Infrastructure.Repository;
 using Infrastructure.Service;
+using IronXL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 
@@ -47,6 +48,35 @@ namespace API.Controllers
                 });
             }
             
+        }
+        [HttpPost("bulkCreate/{divisionId}")]
+        public async Task<IActionResult> BulkCreate(int divisionId,IFormFile file)
+        {
+            WorkBook workBook = WorkBook.Load(file.OpenReadStream());
+            WorkSheet workSheet = workBook.WorkSheets.First();
+
+            int numberOfDataRows = workSheet.RowCount;
+
+            List<Property> properties = new List<Property>();
+
+            for (int i = 1; i < numberOfDataRows; i++)
+            {
+                PropertyCreationModel propertyCreationModel = new PropertyCreationModel
+                {
+                    PropertyName = workSheet.GetCellAt(i, 0).StringValue,
+                    Brief = workSheet.GetCellAt(i, 1).StringValue,
+                    Area = workSheet.GetCellAt(i, 2).StringValue,
+                    Description = workSheet.GetCellAt(i, 3).StringValue,
+                    DivisionId = divisionId,
+                };
+                var property = _mapper.Map<Property>(propertyCreationModel);
+                property.IsSold = false;
+                properties.Add(property);
+
+            }
+            _propertyRepository.InsertMulti(properties);
+            _propertyRepository.Save();
+            return Ok(properties);
         }
     }
 }

@@ -12,5 +12,7 @@ namespace Infrastructure.DTOs.Division
         public string DivisionStatus { get; set; }
         public string Description { get; set; }
         public int ProjectId { get; set; }
+        public int? AgencyId { get; set; }
+
     }
 }

@@ -3,6 +3,7 @@ using Core;
 using Infrastructure.DTOs.Division;
 using Infrastructure.DTOs.Project;
 using Infrastructure.Repository;
+using Infrastructure.Service;
 using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,12 @@ namespace API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Division> _divisionRepository;
-        public DivisionController(IMapper mapper, IGenericRepository<Division> divisionRepository)
+        private readonly IAuthService _authService;
+        public DivisionController(IMapper mapper, IGenericRepository<Division> divisionRepository, IAuthService authService)
         {
             _divisionRepository = divisionRepository;
             _mapper = mapper;
+            _authService = authService;
         }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DivisionCreationModel model)
@@ -35,6 +38,22 @@ namespace API.Controllers
         public async Task<IActionResult> GetByProjectId([FromQuery] int projectId)
         {
             return Ok(_divisionRepository.Filter(x => x.ProjectId == projectId));
+        }
+        [HttpGet("role")]
+        public async Task<IActionResult> GetByRole()
+        {
+            var header = this.Request.Headers;
+            var token = header["Authorization"];
+            var role = _authService.GetCurrentUserRole(token);
+            var userId = _authService.GetCurrentUserId(token);
+            if (role != null && userId != null) { 
+                switch(role)
+                {
+                    case "Agency":
+                        return Ok(_divisionRepository.Filter(x => x.AgencyId == userId));
+                }
+            }
+            return Ok(_divisionRepository.GetAll());
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)

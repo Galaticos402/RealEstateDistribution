@@ -13,5 +13,8 @@ namespace Infrastructure.DTOs.SaleBatch
         public DateTime PremiumStartDate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public string BankAccount { get; set; }
+        public string BankName { get; set; }
+        public string ReceiverName { get; set; }
     }
 }

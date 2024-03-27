@@ -25,10 +25,23 @@ namespace API.Controllers
             _projectRepository = projectRepository;
             _authService = authService;
         }
+        [Authorize(Roles = "Investor")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProjectCreationModel model)
         {
+            var header = this.Request.Headers;
+            var token = header["Authorization"];
+            var userId = _authService.GetCurrentUserId(token);
+            if (userId == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Cannot find requesting user"
+                });
+            }
             var project = _mapper.Map<Project>(model);
+            project.CreatedDate = DateTime.Now;
+            project.InvestorId = (int)userId;
             _projectRepository.Insert(project);
             _projectRepository.Save();
             return Ok(project);

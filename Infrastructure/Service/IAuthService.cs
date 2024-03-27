@@ -11,5 +11,7 @@ namespace Infrastructure.Service
     {
         Task<string> Authorize(string email, string password);
         int? GetCurrentUserId(string authHeader);
+
+        string? GetCurrentUserRole(string authHeader);
     }
 }

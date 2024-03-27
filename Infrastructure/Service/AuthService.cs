@@ -76,5 +76,24 @@ namespace Infrastructure.Service
 
             return userId;
         }
+
+        public string? GetCurrentUserRole(string authHeader)
+        {
+            if (authHeader == null) return null;
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = authHeader.Replace("Bearer ", "");
+            var token = handler.ReadToken(jwtToken) as JwtSecurityToken;
+            if (token == null)
+            {
+                return null;
+            }
+            var role = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (role == null)
+            {
+                return null;
+            }
+
+            return role.Value;
+        }
     }
 }
